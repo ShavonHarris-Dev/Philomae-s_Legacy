@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #3D5A3C;
+        }
+        .instructions {
+            background: #FBF8F3;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #D47D54;
+        }
+        button {
+            background: #3D5A3C;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #2d4a2c;
+        }
+        #preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .icon-preview {
+            text-align: center;
+        }
+        .icon-preview canvas {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 150px;
+        }
+        .icon-preview p {
+            margin: 10px 0 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Family Reunion PWA - Icon Generator</h1>
+
+        <div class="instructions">
+            <h3>Instructions:</h3>
+            <ol>
+                <li>Click "Generate Icons" to create placeholder icons</li>
+                <li>Right-click each icon below and save it to the <code>/icons/</code> folder</li>
+                <li>Or replace these with your own custom icons (recommended)</li>
+            </ol>
+            <p><strong>Note:</strong> For best results, create custom icons using a design tool and save them as PNG files.</p>
+        </div>
+
+        <button onclick="generateIcons()">Generate Icons</button>
+        <button onclick="downloadAllIcons()">Download All Icons</button>
+
+        <div id="preview"></div>
+    </div>
+
+    <script>
+        const ICON_SIZES = [72, 96, 128, 144, 152, 192, 384, 512];
+        const iconData = {};
+
+        function generateIcons() {
+            const preview = document.getElementById('preview');
+            preview.innerHTML = '';
+
+            ICON_SIZES.forEach(size => {
+                const canvas = createIcon(size);
+                const container = document.createElement('div');
+                container.className = 'icon-preview';
+
+                const label = document.createElement('p');
+                label.textContent = `${size}x${size}`;
+
+                container.appendChild(canvas);
+                container.appendChild(label);
+
+                const downloadBtn = document.createElement('button');
+                downloadBtn.textContent = 'Download';
+                downloadBtn.onclick = () => downloadIcon(canvas, size);
+                container.appendChild(downloadBtn);
+
+                preview.appendChild(container);
+
+                // Store the data URL for batch download
+                iconData[size] = canvas.toDataURL('image/png');
+            });
+        }
+
+        function createIcon(size) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#3D5A3C');
+            gradient.addColorStop(1, '#A8B5A0');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+
+            // Add decorative element
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+            ctx.font = `${size * 0.6}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('✦', size / 2, size / 2);
+
+            // Add text
+            ctx.fillStyle = 'white';
+            ctx.font = `bold ${size * 0.15}px Arial`;
+            ctx.fillText('FR', size / 2, size * 0.7);
+
+            return canvas;
+        }
+
+        function downloadIcon(canvas, size) {
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        function downloadAllIcons() {
+            if (Object.keys(iconData).length === 0) {
+                alert('Please generate icons first!');
+                return;
+            }
+
+            ICON_SIZES.forEach(size => {
+                setTimeout(() => {
+                    const link = document.createElement('a');
+                    link.download = `icon-${size}x${size}.png`;
+                    link.href = iconData[size];
+                    link.click();
+                }, size * 10); // Stagger downloads
+            });
+
+            alert('Icons will download one by one. Please save them to the /icons/ folder.');
+        }
+    </script>
+</body>
+</html>

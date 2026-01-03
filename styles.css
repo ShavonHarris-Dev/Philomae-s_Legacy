@@ -1,0 +1,828 @@
+/**
+ * Family Reunion PWA - Stylesheet
+ * Clean, maintainable CSS with organized sections
+ */
+
+/* ===========================
+   Fonts & CSS Variables
+   =========================== */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Playfair+Display:wght@700;900&family=Karla:wght@400;600&display=swap');
+
+:root {
+    --cream: #FBF8F3;
+    --sage: #A8B5A0;
+    --terracotta: #D47D54;
+    --deep-brown: #4A3428;
+    --gold: #D4AF37;
+    --soft-pink: #E8C4B8;
+    --forest: #3D5A3C;
+}
+
+/* ===========================
+   Global Styles
+   =========================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Crimson Pro', serif;
+    background: var(--cream);
+    color: var(--deep-brown);
+    line-height: 1.7;
+    overflow-x: hidden;
+}
+
+/* Decorative background texture */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        repeating-linear-gradient(90deg, rgba(168, 181, 160, 0.03) 0px, transparent 1px, transparent 40px, rgba(168, 181, 160, 0.03) 41px),
+        repeating-linear-gradient(0deg, rgba(168, 181, 160, 0.03) 0px, transparent 1px, transparent 40px, rgba(168, 181, 160, 0.03) 41px);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ===========================
+   Header Section with Hero Image
+   =========================== */
+header {
+    position: relative;
+    width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    margin-top: 2rem;
+}
+
+.header-image {
+    width: 100%;
+    height: auto;
+}
+
+.header-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Typography for sections (not in header) */
+h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem;
+    color: var(--deep-brown);
+    margin-bottom: 0.5rem;
+    font-weight: 900;
+    letter-spacing: -2px;
+}
+
+.subtitle {
+    font-family: 'Karla', sans-serif;
+    font-size: 1.3rem;
+    color: var(--deep-brown);
+    opacity: 0.95;
+}
+
+/* ===========================
+   Navigation Tabs
+   =========================== */
+nav {
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    animation: slideDown 0.8s ease-out;
+}
+
+.tab-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.tab {
+    padding: 1.2rem 2rem;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-family: 'Karla', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--deep-brown);
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tab:hover {
+    background: var(--cream);
+    color: var(--terracotta);
+}
+
+.tab.active {
+    color: var(--terracotta);
+    border-bottom-color: var(--terracotta);
+    background: var(--cream);
+}
+
+/* ===========================
+   Main Content Container
+   =========================== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+}
+
+.tab-content {
+    display: none;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* ===========================
+   Section Styling
+   =========================== */
+.section {
+    background: white;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    border-left: 5px solid var(--terracotta);
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(0,0,0,0.1);
+}
+
+.section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--forest);
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+.section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: var(--terracotta);
+    margin: 2rem 0 1rem;
+    font-weight: 700;
+}
+
+/* ===========================
+   Event Details Grid
+   =========================== */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.detail-card {
+    background: linear-gradient(135deg, var(--cream) 0%, white 100%);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 2px solid var(--sage);
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(168, 181, 160, 0.3);
+}
+
+.detail-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.detail-label {
+    font-family: 'Karla', sans-serif;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--sage);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.detail-value {
+    font-size: 1.5rem;
+    color: var(--deep-brown);
+    font-weight: 600;
+}
+
+/* ===========================
+   Photo Upload Section
+   =========================== */
+.upload-area {
+    border: 3px dashed var(--sage);
+    border-radius: 10px;
+    padding: 3rem;
+    text-align: center;
+    background: var(--cream);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 2rem 0;
+}
+
+.upload-area:hover {
+    border-color: var(--terracotta);
+    background: white;
+    transform: scale(1.02);
+}
+
+.upload-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+#photoInput {
+    display: none;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.photo-item {
+    aspect-ratio: 1;
+    background: var(--cream);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.photo-item:hover {
+    transform: scale(1.05) rotate(2deg);
+}
+
+.photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ===========================
+   Recommendations Section
+   =========================== */
+.recommendation-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.recommendation-item {
+    background: var(--cream);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--gold);
+    transition: all 0.3s ease;
+}
+
+.recommendation-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.recommendation-item h4 {
+    font-family: 'Playfair Display', serif;
+    color: var(--forest);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.recommendation-item p {
+    color: var(--deep-brown);
+    margin-bottom: 0.5rem;
+}
+
+.recommendation-item a {
+    color: var(--terracotta);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.recommendation-item a:hover {
+    color: var(--forest);
+    text-decoration: underline;
+}
+
+/* ===========================
+   Routes / Carpool Section
+   =========================== */
+.routes-container {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.route-card {
+    background: linear-gradient(135deg, var(--soft-pink) 0%, var(--cream) 100%);
+    padding: 2rem;
+    border-radius: 10px;
+    border: 2px solid var(--terracotta);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.route-card:hover {
+    transform: translateX(10px);
+    box-shadow: 0 6px 20px rgba(212, 125, 84, 0.3);
+}
+
+.route-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+}
+
+.route-info h4 {
+    font-family: 'Playfair Display', serif;
+    color: var(--forest);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.route-info p {
+    color: var(--deep-brown);
+    font-size: 1.1rem;
+}
+
+.seats-badge {
+    background: var(--terracotta);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-family: 'Karla', sans-serif;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+/* ===========================
+   Payment Section
+   =========================== */
+.payment-section {
+    text-align: center;
+    padding: 3rem;
+    background: linear-gradient(135deg, var(--sage) 0%, var(--forest) 100%);
+    border-radius: 12px;
+    color: white;
+}
+
+.pay-button {
+    background: var(--gold);
+    color: var(--deep-brown);
+    border: none;
+    padding: 1.5rem 3rem;
+    font-size: 1.3rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 2rem 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.pay-button:hover {
+    background: white;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.qr-code-container {
+    display: none;
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 2rem auto;
+    max-width: 400px;
+}
+
+.qr-code-container.show {
+    display: block;
+    animation: scaleIn 0.5s ease-out;
+}
+
+.qr-placeholder {
+    width: 250px;
+    height: 250px;
+    margin: 0 auto 1rem;
+    background: var(--cream);
+    border: 3px solid var(--sage);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--deep-brown);
+    border-radius: 10px;
+}
+
+/* ===========================
+   RSVP Form Section
+   =========================== */
+.rsvp-form {
+    background: var(--cream);
+    padding: 2rem;
+    border-radius: 10px;
+    margin-top: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    color: var(--forest);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid var(--sage);
+    border-radius: 8px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--terracotta);
+}
+
+.submit-button {
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    padding: 1.2rem 3rem;
+    font-size: 1.2rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.submit-button:hover {
+    background: var(--forest);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+/* ===========================
+   RSVP List
+   =========================== */
+.rsvp-list {
+    margin-top: 2rem;
+}
+
+.rsvp-item {
+    background: white;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--sage);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    cursor: move;
+}
+
+.rsvp-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.rsvp-name {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: var(--forest);
+}
+
+.rsvp-count {
+    background: var(--terracotta);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-family: 'Karla', sans-serif;
+}
+
+.rsvp-item.placed {
+    opacity: 0.6;
+}
+
+/* ===========================
+   Family Tree Section
+   =========================== */
+.tree-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    margin-top: 2rem;
+    overflow-x: auto;
+}
+
+.tree {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+    min-width: 800px;
+}
+
+.tree-node {
+    text-align: center;
+    position: relative;
+    padding: 1rem;
+}
+
+.grandmother {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--terracotta) 100%);
+    color: white;
+    padding: 1.5rem 2rem;
+    border-radius: 50px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(212, 125, 84, 0.4);
+    margin-bottom: 3rem;
+    display: inline-block;
+}
+
+.branches {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+.branch {
+    position: relative;
+    padding: 1rem;
+}
+
+.branch::before {
+    content: '';
+    position: absolute;
+    top: -2rem;
+    left: 50%;
+    width: 2px;
+    height: 2rem;
+    background: var(--sage);
+}
+
+.child-name {
+    background: var(--forest);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.family-member {
+    background: var(--cream);
+    border: 3px solid var(--sage);
+    padding: 1rem 1.5rem;
+    border-radius: 30px;
+    cursor: move;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    min-width: 120px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.family-member:hover {
+    background: var(--soft-pink);
+    border-color: var(--terracotta);
+    transform: scale(1.05);
+}
+
+.family-member.placed {
+    background: var(--terracotta);
+    color: white;
+    border-color: var(--forest);
+}
+
+.drop-zone {
+    min-height: 60px;
+    border: 2px dashed var(--sage);
+    border-radius: 20px;
+    margin: 0.5rem;
+    padding: 0.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.drop-zone.drag-over {
+    background: var(--soft-pink);
+    border-color: var(--terracotta);
+    border-style: solid;
+}
+
+.drag-instructions {
+    background: var(--sage);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-family: 'Karla', sans-serif;
+}
+
+/* ===========================
+   Planning Phase (2027)
+   =========================== */
+.planning-phase {
+    background: linear-gradient(135deg, var(--cream) 0%, white 100%);
+    padding: 4rem 2rem;
+    border-radius: 12px;
+    text-align: center;
+    border: 3px dashed var(--sage);
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.planning-phase h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--forest);
+    margin-bottom: 1rem;
+}
+
+.planning-phase p {
+    font-size: 1.3rem;
+    color: var(--deep-brown);
+}
+
+/* ===========================
+   Animations
+   =========================== */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+/* ===========================
+   Responsive Design
+   =========================== */
+@media (max-width: 768px) {
+    /* Header with image responsive */
+    header {
+        margin-top: 1rem;
+    }
+
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .tab {
+        padding: 1rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .section {
+        padding: 1.5rem;
+    }
+
+    .section h2 {
+        font-size: 2rem;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .route-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .seats-badge {
+        margin-left: 0;
+        margin-top: 1rem;
+    }
+
+    .tree {
+        min-width: 100%;
+    }
+
+    .branches {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .child-name {
+        font-size: 1.1rem;
+        padding: 0.6rem 1.2rem;
+    }
+}

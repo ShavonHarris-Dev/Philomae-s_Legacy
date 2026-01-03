@@ -1,0 +1,22 @@
+{
+  "name": "family-reunion-pwa",
+  "version": "1.0.0",
+  "description": "A Progressive Web App for coordinating family reunions",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve -l 8000",
+    "dev": "npx serve -l 8000",
+    "test": "echo \"No tests configured yet\" && exit 0"
+  },
+  "keywords": [
+    "pwa",
+    "family",
+    "reunion",
+    "event-planning",
+    "offline-first"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}

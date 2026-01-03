@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Family Reunion 2026 - Celebrating Family, Creating Memories in St. Paul, Minnesota">
+    <meta name="theme-color" content="#3D5A3C">
+
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Family Reunion">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icons/icon-512x512.png">
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Playfair+Display:wght@700;900&family=Karla:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="/styles.css">
+
+    <title>Family Reunion 2026 | Memphis, Tennessee</title>
+</head>
+<body>
+    <!-- Header with Hero Image -->
+    <header>
+        <div class="header-image">
+            <img src="/images/hero-image.jpg" alt="Family Reunion - Multiple generations gathered together on a beautiful staircase">
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav>
+        <div class="tab-container">
+            <button class="tab active" data-tab="2026">2026</button>
+            <button class="tab" data-tab="2027">2027</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 2026 Content -->
+        <div id="2026" class="tab-content active">
+            <!-- Event Details -->
+            <div class="section">
+                <h2>Event Details</h2>
+                <div class="details-grid">
+                    <div class="detail-card">
+                        <div class="detail-icon">🏛️</div>
+                        <div class="detail-label">Venue</div>
+                        <div class="detail-value">Bert Ferguson Community Center</div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">📍</div>
+                        <div class="detail-label">Location</div>
+                        <div class="detail-value">Memphis, Tennessee</div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">📅</div>
+                        <div class="detail-label">Dates</div>
+                        <div class="detail-value">July 18-20, 2026</div>
+                    </div>
+                    <div class="detail-card">
+                        <div class="detail-icon">💰</div>
+                        <div class="detail-label">Cost Per Family</div>
+                        <div class="detail-value">$100</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Photo Upload -->
+            <div class="section">
+                <h2>Share Your Photos</h2>
+                <p>Upload your favorite moments from the reunion! Create lasting memories together.</p>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📸</div>
+                    <p style="font-size: 1.2rem; font-weight: 600;">Click to upload photos</p>
+                    <p style="color: var(--sage); margin-top: 0.5rem;">or drag and drop</p>
+                </div>
+                <input type="file" id="photoInput" accept="image/*" multiple>
+                <div id="photoGrid" class="photo-grid"></div>
+            </div>
+
+            <!-- Hotel Recommendations -->
+            <div class="section">
+                <h2>Where to Stay</h2>
+                <p>Comfortable accommodations near our reunion venue</p>
+                <div class="recommendation-list">
+                    <div class="recommendation-item">
+                        <h4>🏨 Fairfield by Marriott Inn & Suites - Collierville</h4>
+                        <p><strong>Rating:</strong> ⭐⭐⭐⭐ 4.4 stars</p>
+                        <p><strong>Distance:</strong> 13 miles from venue</p>
+                        <p><strong>Rate:</strong> Starting at $154/night</p>
+                        <a href="#" target="_blank">Book Now →</a>
+                    </div>
+                    <div class="recommendation-item">
+                        <h4>🏨 Hyatt Place Memphis/Germantown</h4>
+                        <p><strong>Rating:</strong> ⭐⭐⭐⭐ 4.3 stars</p>
+                        <p><strong>Distance:</strong> 9.6 miles from venue</p>
+                        <p><strong>Rate:</strong> Starting at $152/night</p>
+                        <a href="#" target="_blank">Book Now →</a>
+                    </div>
+                    <div class="recommendation-item">
+                        <h4>🏨 The Memphian, a Tribute Portfolio Hotel</h4>
+                        <p><strong>Rating:</strong> ⭐⭐⭐⭐+ 4+ stars</p>
+                        <p><strong>Distance:</strong> 15 miles from venue</p>
+                        <p><strong>Rate:</strong> Starting at $276/night</p>
+                        <a href="#" target="_blank">Book Now →</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Things to Do -->
+            <div class="section">
+                <h2>Things to Do Around Town</h2>
+                <p>Explore Memphis while you're here!</p>
+                <div class="recommendation-list">
+                    <div class="recommendation-item">
+                        <h4>🌳 Shelby Farms Park</h4>
+                        <p>One of the largest urban parks in America with trails, lakes, and outdoor activities</p>
+                        <p>Perfect for families - biking, paddleboating, and nature exploration</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <h4>🦁 Memphis Zoo</h4>
+                        <p>Award-winning zoo featuring pandas, hippos, and over 3,500 animals</p>
+                        <p>Located in beautiful Overton Park - great for all ages!</p>
+                    </div>
+                    <div class="recommendation-item">
+                        <h4>🎨 Dixon Gallery & Gardens</h4>
+                        <p>Stunning art museum with impressionist paintings and 17 acres of beautiful gardens</p>
+                        <p>A peaceful oasis showcasing world-class art and nature</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Routes / Carpool -->
+            <div class="section">
+                <h2>Carpool Routes</h2>
+                <p>Share rides and save on gas! Connect with family members traveling from your area.</p>
+                <div class="routes-container">
+                    <div class="route-card">
+                        <div class="route-icon">🚗</div>
+                        <div class="route-info">
+                            <h4>Example Cousin T</h4>
+                            <p>Milwaukee → Memphis, TN</p>
+                        </div>
+                        <div class="seats-badge">4 Seats Available</div>
+                    </div>
+                </div>
+                <p style="margin-top: 2rem; color: var(--sage); font-style: italic;">
+                    Want to add your route? Contact the reunion organizer!
+                </p>
+            </div>
+
+            <!-- Payment -->
+            <div class="section">
+                <div class="payment-section">
+                    <h2 style="color: white;">Payment</h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 1rem;">Secure your spot! Pay your registration fee here.</p>
+                    <button class="pay-button" id="payButton">Pay Now via Zelle</button>
+                    <div id="qrCodeContainer" class="qr-code-container">
+                        <h3 style="color: var(--deep-brown); margin-bottom: 1rem;">Scan QR Code to Pay</h3>
+                        <div class="qr-placeholder">
+                            <div style="text-align: center;">
+                                <p style="font-weight: 600; margin-bottom: 0.5rem;">QR Code Placeholder</p>
+                                <p style="font-size: 0.9rem; color: var(--sage);">Replace with your Zelle QR code</p>
+                            </div>
+                        </div>
+                        <p style="color: var(--deep-brown); font-weight: 600; margin-top: 1rem;">Amount: $150 per person</p>
+                        <p style="color: var(--sage); font-size: 0.9rem;">Include your name in the payment note</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RSVP -->
+            <div id="rsvp" class="section">
+                <h2>RSVP</h2>
+                <p>Let us know you're coming! Add your name to the family tree below.</p>
+
+                <div class="rsvp-form">
+                    <form id="rsvpForm">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                        </div>
+                        <div class="form-group">
+                            <label for="guests">Number of Guests (including yourself)</label>
+                            <select id="guests" name="guests" required>
+                                <option value="">Select number of guests</option>
+                                <option value="1">1 person</option>
+                                <option value="2">2 people</option>
+                                <option value="3">3 people</option>
+                                <option value="4">4 people</option>
+                                <option value="5">5 people</option>
+                                <option value="6">6+ people</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="submit-button">Submit RSVP</button>
+                    </form>
+                </div>
+
+                <h3>Who's Coming</h3>
+                <div id="rsvpList" class="rsvp-list">
+                    <div class="rsvp-item" draggable="true" id="rsvp-sample">
+                        <span class="rsvp-name">Sample Family (You!)</span>
+                        <span class="rsvp-count">4 guests</span>
+                    </div>
+                </div>
+
+                <!-- Family Tree -->
+                <h3 style="margin-top: 3rem;">Interactive Family Tree</h3>
+                <div class="drag-instructions">
+                    🌳 Drag and drop your name from the RSVP list above to add yourself under your family branch!
+                </div>
+                <div class="tree-container">
+                    <div class="tree">
+                        <div class="tree-node">
+                            <div class="grandmother">👑 Philomae</div>
+                            <div class="branches">
+                                <div class="branch">
+                                    <div class="child-name">Ollie</div>
+                                    <div class="drop-zone" data-branch="ollie">
+                                        <span style="color: var(--sage); font-style: italic; font-size: 0.9rem;">Add yourself here</span>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="child-name">Mary</div>
+                                    <div class="drop-zone" data-branch="mary">
+                                        <span style="color: var(--sage); font-style: italic; font-size: 0.9rem;">Add yourself here</span>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="child-name">Deno</div>
+                                    <div class="drop-zone" data-branch="deno">
+                                        <span style="color: var(--sage); font-style: italic; font-size: 0.9rem;">Add yourself here</span>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="child-name">Howard</div>
+                                    <div class="drop-zone" data-branch="howard">
+                                        <span style="color: var(--sage); font-style: italic; font-size: 0.9rem;">Add yourself here</span>
+                                    </div>
+                                </div>
+                                <div class="branch">
+                                    <div class="child-name">B</div>
+                                    <div class="drop-zone" data-branch="b">
+                                        <span style="color: var(--sage); font-style: italic; font-size: 0.9rem;">Add yourself here</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2027 Content -->
+        <div id="2027" class="tab-content">
+            <div class="planning-phase">
+                <h2>🌱 Planning Phase 🌱</h2>
+                <p>We're already looking forward to next year's reunion!</p>
+                <p style="margin-top: 1rem;">Details coming soon...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/app.js"></script>
+</body>
+</html>
