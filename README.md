@@ -4,14 +4,16 @@ A beautiful, clean, and maintainable Progressive Web App for coordinating family
 
 ## Features
 
+- **Real-Time Sync**: RSVPs and family tree updates appear instantly for everyone (via Firebase)
 - **Event Details**: Display reunion dates, location, and costs
 - **Photo Sharing**: Upload and share family photos
-- **RSVP System**: Track attendance with interactive family tree
+- **Interactive RSVP System**: Track attendance with drag-and-drop family tree
+- **Family Member Support**: Add spouse and children names in a single RSVP
 - **Hotel Recommendations**: Curated list of nearby accommodations
-- **Carpool Coordination**: Share rides with family members
 - **Payment Integration**: QR code for Zelle payments
 - **Offline Support**: Works without internet connection
 - **Installable**: Add to home screen on mobile devices
+- **Multi-Device**: See updates across all devices in real-time
 
 ## Project Structure
 
@@ -19,13 +21,18 @@ A beautiful, clean, and maintainable Progressive Web App for coordinating family
 family-reunion-pwa/
 ├── index.html              # Main HTML file
 ├── styles.css              # All styling
-├── app.js                  # Application logic
+├── app.js                  # Application logic (with Firebase integration)
+├── firebase-config.js      # Firebase configuration
 ├── sw.js                   # Service Worker for offline support
 ├── manifest.json           # PWA manifest
 ├── generate-icons.html     # Icon generation tool
+├── FIREBASE-SETUP.md       # Firebase setup instructions
+├── SETUP-HERO-IMAGE.md     # Hero image setup guide
 ├── icons/                  # App icons directory
 │   └── .gitkeep
-└── README.md              # This file
+├── images/                 # Hero image and photos
+│   └── README.md
+└── README.md               # This file
 ```
 
 ## Getting Started
@@ -40,13 +47,23 @@ family-reunion-pwa/
 
 1. **Clone or download this repository**
 
-2. **Generate Icons**
+2. **Set Up Firebase (Required for Real-Time Sync)**
+   - Follow the detailed instructions in `FIREBASE-SETUP.md`
+   - Takes about 10 minutes
+   - Enables real-time RSVP and family tree synchronization
+   - **Skip this step if you only want to test locally without real-time features**
+
+3. **Generate Icons**
    - Open `generate-icons.html` in your browser
    - Click "Generate Icons" button
    - Download all icons and save them to the `/icons/` folder
    - OR create custom icons using a design tool (recommended)
 
-3. **Run a Local Server**
+4. **Add Your Hero Image**
+   - Follow the instructions in `SETUP-HERO-IMAGE.md`
+   - Save your family photo as `hero-image.jpg` in the `/images/` folder
+
+5. **Run a Local Server**
 
    Using Python (built-in):
    ```bash
@@ -67,9 +84,10 @@ family-reunion-pwa/
    php -S localhost:8000
    ```
 
-4. **Open in Browser**
+6. **Open in Browser**
    - Navigate to `http://localhost:8000`
    - The app should load with full PWA functionality
+   - Check browser console (F12) for "Firebase initialized successfully" message
 
 ## Customization
 
@@ -193,15 +211,22 @@ When you make changes:
 
 ### Data Persistence
 
-Currently uses localStorage for:
-- RSVP submissions
-- Photo uploads (base64)
-- Family tree placements
+**Firebase Realtime Database (Configured):**
+- RSVP submissions sync across all devices
+- Family tree placements visible to everyone
+- Real-time updates appear instantly
+- See `FIREBASE-SETUP.md` for configuration
 
-To add backend support:
-- Replace localStorage calls in the `Storage` module
-- Add API endpoints in `app.js`
-- Update service worker for background sync
+**LocalStorage (Fallback):**
+- Photo uploads (base64) stored locally
+- Works offline when Firebase is unavailable
+- Data persists in browser storage
+
+**How it works:**
+- App checks for Firebase connection on load
+- If configured, saves to Firebase + shows real-time updates
+- If not configured, falls back to localStorage
+- No errors if Firebase is not set up
 
 ## Customizing for Your Family
 
@@ -229,10 +254,17 @@ In `styles.css`, update the CSS variables:
 <img src="qr-code.png" alt="Zelle QR Code" style="width: 100%; max-width: 250px;">
 ```
 
-### Add Backend Integration
+### Firebase Integration (Already Configured!)
 
-For production use, consider:
-- Firebase for real-time database
+This app uses Firebase Realtime Database for:
+- ✅ Real-time RSVP synchronization
+- ✅ Shared family tree across all devices
+- ✅ Instant updates without page refresh
+- ✅ Offline support with automatic sync
+
+See `FIREBASE-SETUP.md` for configuration instructions.
+
+**Alternative Backend Options:**
 - Supabase for PostgreSQL backend
 - MongoDB for document storage
 - Custom REST API
@@ -254,6 +286,19 @@ For production use, consider:
 - Check manifest.json is valid
 - Verify service worker is registered
 
+**Firebase not working / "Firebase not configured" message:**
+- Make sure you completed the Firebase setup in `FIREBASE-SETUP.md`
+- Verify your `firebase-config.js` has real values (not placeholders)
+- Check browser console for specific Firebase errors
+- Ensure your Firebase database URL matches your project
+- The app will work locally without Firebase, but won't sync across devices
+
+**RSVPs/Tree not syncing across devices:**
+- Verify Firebase is properly configured
+- Check internet connection on all devices
+- Look for "saved to Firebase" messages in browser console
+- Make sure all devices are using the same Firebase project
+
 ## License
 
 This project is open source and available for personal and commercial use.
@@ -269,7 +314,8 @@ For questions or issues:
 ## Future Enhancements
 
 Potential features to add:
-- [ ] Backend API integration
+- [x] Backend API integration (Firebase implemented!)
+- [x] Real-time sync (Firebase Realtime Database)
 - [ ] Real-time chat
 - [ ] Calendar integration
 - [ ] Email notifications
@@ -278,6 +324,7 @@ Potential features to add:
 - [ ] Photo gallery with comments
 - [ ] Weather widget for event dates
 - [ ] Maps integration for directions
+- [ ] Photo upload to Firebase Storage
 
 ## Credits
 
@@ -285,11 +332,13 @@ Built with love for family reunions everywhere.
 
 **Technologies Used:**
 - Vanilla JavaScript (no frameworks)
+- Firebase Realtime Database
 - CSS3 with custom properties
 - HTML5 with semantic markup
 - Service Workers API
 - Web App Manifest
-- LocalStorage API
+- LocalStorage API (fallback)
+- Drag and Drop API
 
 ---
 

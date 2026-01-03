@@ -89,6 +89,307 @@ h1 {
 }
 
 /* ===========================
+   Welcome Hero Section
+   =========================== */
+.welcome-hero {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--sage) 100%);
+    padding: 3rem 2rem;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.welcome-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.welcome-headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    color: var(--cream);
+    margin-bottom: 1rem;
+    font-weight: 900;
+    line-height: 1.2;
+}
+
+.welcome-subtext {
+    font-family: 'Crimson Pro', serif;
+    font-size: 1.5rem;
+    color: var(--cream);
+    font-style: italic;
+    margin-bottom: 2rem;
+    opacity: 0.95;
+}
+
+.welcome-quick-info {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.quick-info-item {
+    font-family: 'Karla', sans-serif;
+    color: var(--cream);
+    font-size: 1.1rem;
+}
+
+.quick-info-item strong {
+    color: var(--gold);
+}
+
+.welcome-ctas {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+}
+
+.cta-primary,
+.cta-secondary {
+    padding: 1.2rem 2.5rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    font-size: 1.2rem;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cta-primary {
+    background: var(--gold);
+    color: var(--deep-brown);
+    border: 3px solid var(--gold);
+}
+
+.cta-primary:hover {
+    background: white;
+    color: var(--forest);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.cta-secondary {
+    background: transparent;
+    color: var(--cream);
+    border: 3px solid var(--cream);
+}
+
+.cta-secondary:hover {
+    background: var(--cream);
+    color: var(--forest);
+    transform: translateY(-3px);
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 2rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--deep-brown);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.step-text {
+    font-family: 'Karla', sans-serif;
+    color: var(--cream);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.step-arrow {
+    color: var(--gold);
+    font-size: 1.5rem;
+    margin: 0 0.5rem;
+}
+
+/* ===========================
+   Legacy Section
+   =========================== */
+.legacy-section {
+    background: linear-gradient(135deg, var(--cream) 0%, white 100%);
+    border-left: 5px solid var(--gold);
+}
+
+.legacy-intro {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    color: var(--deep-brown);
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.legacy-values {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+}
+
+.value-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    border: 2px solid var(--sage);
+    transition: all 0.3s ease;
+}
+
+.value-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    border-color: var(--terracotta);
+}
+
+.value-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--forest);
+    margin-bottom: 0.8rem;
+}
+
+.value-card p {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: var(--deep-brown);
+}
+
+.legacy-call {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: var(--forest);
+    font-weight: 600;
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: rgba(168, 181, 160, 0.1);
+    border-left: 4px solid var(--terracotta);
+    border-radius: 5px;
+}
+
+/* ===========================
+   Schedule Section
+   =========================== */
+.schedule-section {
+    background: white;
+}
+
+.schedule-note {
+    color: var(--sage);
+    font-size: 1.05rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.schedule-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.schedule-day {
+    background: var(--cream);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid var(--sage);
+}
+
+.day-header {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--sage) 100%);
+    padding: 1.5rem;
+    text-align: center;
+    color: white;
+}
+
+.day-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.day-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.day-subtitle {
+    font-family: 'Karla', sans-serif;
+    font-size: 1.1rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.day-events {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.event-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border-left: 4px solid var(--terracotta);
+    transition: all 0.3s ease;
+}
+
+.event-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.event-time {
+    font-family: 'Karla', sans-serif;
+    font-weight: 700;
+    color: var(--terracotta);
+    white-space: nowrap;
+}
+
+.event-name {
+    font-weight: 600;
+    color: var(--deep-brown);
+}
+
+.event-location {
+    font-size: 0.95rem;
+    color: var(--sage);
+    font-style: italic;
+    grid-column: 2 / 3;
+}
+
+/* ===========================
    Navigation Tabs
    =========================== */
 nav {
@@ -214,6 +515,41 @@ nav {
 .detail-icon {
     font-size: 3rem;
     margin-bottom: 1rem;
+}
+
+.detail-icon.date-icon {
+    background: white;
+    border: 3px solid var(--terracotta);
+    border-radius: 10px;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.date-month {
+    font-family: 'Karla', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: white;
+    background: var(--terracotta);
+    width: 100%;
+    text-align: center;
+    padding: 0.3rem 0;
+    border-radius: 7px 7px 0 0;
+    margin: -3px -3px 0;
+}
+
+.date-day {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--deep-brown);
+    line-height: 1;
 }
 
 .detail-label {
@@ -557,6 +893,18 @@ nav {
     opacity: 0.6;
 }
 
+.family-members-section {
+    background: rgba(168, 181, 160, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    border: 2px dashed var(--sage);
+}
+
+.family-members-section h4 {
+    margin-top: 0;
+}
+
 /* ===========================
    Family Tree Section
    =========================== */
@@ -674,14 +1022,97 @@ nav {
     border-style: solid;
 }
 
+/* Multi-level tree styling */
+.member-wrapper {
+    margin: 0.5rem;
+    padding: 0.8rem;
+    background: var(--cream);
+    border: 2px solid var(--sage);
+    border-radius: 15px;
+    flex: 1 1 auto;
+    min-width: 200px;
+    max-width: 300px;
+}
+
+.tree-member-name {
+    background: var(--terracotta);
+    color: white;
+    padding: 0.8rem 1.2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.family-members-list {
+    background: rgba(168, 181, 160, 0.1);
+    border-radius: 10px;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.family-member-item {
+    background: white;
+    color: var(--deep-brown);
+    padding: 0.5rem 0.8rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    text-align: center;
+    border: 1px solid var(--sage);
+}
+
+.family-member-item:last-child {
+    margin-bottom: 0;
+}
+
+.descendant-zone {
+    min-height: 40px;
+    border: 2px dashed var(--sage);
+    border-radius: 12px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.descendant-zone.drag-over {
+    background: var(--soft-pink);
+    border-color: var(--terracotta);
+    border-style: solid;
+}
+
+.descendant-zone:empty::before {
+    content: 'Add children here';
+    color: var(--sage);
+    font-style: italic;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+/* Drop zones should display siblings side-by-side */
+.drop-zone {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
 .drag-instructions {
     background: var(--sage);
     color: white;
-    padding: 1rem;
+    padding: 1.5rem;
     border-radius: 8px;
-    text-align: center;
+    text-align: left;
     margin-bottom: 2rem;
     font-family: 'Karla', sans-serif;
+    line-height: 1.8;
+}
+
+.drag-instructions strong {
+    color: var(--gold);
 }
 
 /* ===========================
@@ -824,5 +1255,74 @@ nav {
     .child-name {
         font-size: 1.1rem;
         padding: 0.6rem 1.2rem;
+    }
+
+    /* Welcome Hero responsive */
+    .welcome-headline {
+        font-size: 2rem;
+    }
+
+    .welcome-subtext {
+        font-size: 1.2rem;
+    }
+
+    .welcome-quick-info {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .welcome-ctas {
+        flex-direction: column;
+    }
+
+    .cta-primary,
+    .cta-secondary {
+        width: 100%;
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .progress-steps {
+        flex-wrap: wrap;
+    }
+
+    /* Schedule responsive */
+    .event-item {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .event-location {
+        grid-column: 1 / 2;
+    }
+
+    /* Legacy section responsive */
+    .legacy-values {
+        grid-template-columns: 1fr;
+    }
+
+    /* Family tree responsive */
+    .member-wrapper {
+        min-width: 100%;
+        max-width: 100%;
+    }
+
+    .drop-zone {
+        flex-direction: column;
+    }
+
+    .drag-instructions {
+        font-size: 0.9rem;
+        padding: 1rem;
+    }
+
+    /* Family members section responsive */
+    .family-members-section {
+        padding: 1rem;
+    }
+
+    .family-member-item {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
     }
 }
