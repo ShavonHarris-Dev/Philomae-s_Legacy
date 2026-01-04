@@ -849,6 +849,65 @@ nav {
     box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
+.add-non-attending-btn {
+    background: white;
+    color: var(--sage);
+    border: 2px dashed var(--sage);
+    padding: 1rem 2rem;
+    font-size: 1rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.add-non-attending-btn:hover {
+    background: var(--sage);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.non-attending-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(168, 181, 160, 0.1);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid var(--sage);
+}
+
+.non-attending-item input {
+    border: 2px solid var(--sage);
+    border-radius: 8px;
+    padding: 0.8rem;
+    font-family: 'Crimson Pro', serif;
+    font-size: 1rem;
+}
+
+.remove-non-attending-btn {
+    background: var(--terracotta);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.remove-non-attending-btn:hover {
+    background: var(--deep-brown);
+    transform: scale(1.05);
+}
+
 /* ===========================
    RSVP List
    =========================== */
@@ -1200,6 +1259,156 @@ nav {
 }
 
 /* ===========================
+   Quick Access Section
+   =========================== */
+.quick-access-section {
+    background: linear-gradient(135deg, var(--cream) 0%, white 100%);
+}
+
+.quick-access-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.access-card {
+    background: white;
+    border: 3px solid var(--sage);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Crimson Pro', serif;
+}
+
+.access-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(168, 181, 160, 0.3);
+    border-color: var(--terracotta);
+}
+
+.access-card .card-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.access-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    color: var(--forest);
+    margin-bottom: 0.5rem;
+}
+
+.access-card p {
+    color: var(--sage);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* ===========================
+   Modal Styles
+   =========================== */
+.modal-content-section {
+    display: none !important;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    overflow: hidden;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--cream);
+    border-radius: 15px;
+    width: 90%;
+    max-width: 1000px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--sage) 100%);
+    padding: 1.5rem 2rem;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    font-family: 'Playfair Display', serif;
+    color: var(--cream);
+    margin: 0;
+    font-size: 2rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--cream);
+    font-size: 2.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 2rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.modal-body .section {
+    display: block !important;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+}
+
+/* ===========================
    Responsive Design
    =========================== */
 @media (max-width: 768px) {
@@ -1324,5 +1533,40 @@ nav {
     .family-member-item {
         font-size: 0.85rem;
         padding: 0.4rem 0.6rem;
+    }
+
+    /* Quick access responsive */
+    .quick-access-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .access-card {
+        padding: 1.5rem;
+    }
+
+    .access-card .card-icon {
+        font-size: 2.5rem;
+    }
+
+    .access-card h3 {
+        font-size: 1.3rem;
+    }
+
+    /* Modal responsive */
+    .modal-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .modal-header {
+        padding: 1rem 1.5rem;
+    }
+
+    .modal-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
     }
 }

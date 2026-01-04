@@ -63,6 +63,7 @@ const PhotoUpload = {
         }
 
         this.attachEventListeners();
+        this.loadPhotosFromFirebase();
     },
 
     attachEventListeners() {
@@ -93,6 +94,7 @@ const PhotoUpload = {
     },
 
     readAndDisplayImage(file) {
+        // Display image locally first
         const reader = new FileReader();
 
         reader.onload = (e) => {
@@ -103,6 +105,65 @@ const PhotoUpload = {
         };
 
         reader.readAsDataURL(file);
+
+        // Upload to Firebase Storage
+        this.uploadToFirebase(file);
+    },
+
+    uploadToFirebase(file) {
+        if (!window.firebaseStorage) {
+            console.log('Firebase Storage not configured - photo saved locally only');
+            return;
+        }
+
+        // Create a unique filename
+        const timestamp = Date.now();
+        const filename = `reunion-photos/${timestamp}-${file.name}`;
+        const storageRef = window.firebaseStorage.ref();
+        const photoRef = storageRef.child(filename);
+
+        // Upload the file
+        const uploadTask = photoRef.put(file);
+
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                // Progress
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+            },
+            (error) => {
+                // Error
+                console.error('Error uploading photo:', error);
+                alert('Failed to upload photo. Please try again.');
+            },
+            () => {
+                // Success - get download URL and save to database
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    this.savePhotoToDatabase(downloadURL, filename);
+                    console.log('Photo uploaded successfully!');
+                });
+            }
+        );
+    },
+
+    savePhotoToDatabase(url, filename) {
+        if (!window.firebaseDB) {
+            console.log('Firebase Database not configured');
+            return;
+        }
+
+        const photosRef = window.firebaseDB.ref('photos');
+        photosRef.push({
+            url: url,
+            filename: filename,
+            uploadedAt: firebase.database.ServerValue.TIMESTAMP
+        })
+        .then(() => {
+            console.log('Photo URL saved to database');
+        })
+        .catch((error) => {
+            console.error('Error saving photo URL:', error);
+        });
     },
 
     handleDragOver(e) {
@@ -122,6 +183,27 @@ const PhotoUpload = {
 
         const files = e.dataTransfer.files;
         this.handleFileSelect(files);
+    },
+
+    loadPhotosFromFirebase() {
+        if (!window.firebaseDB) {
+            console.log('Firebase not configured - skipping photo load');
+            return;
+        }
+
+        const photosRef = window.firebaseDB.ref('photos');
+
+        photosRef.on('child_added', (snapshot) => {
+            const photoData = snapshot.val();
+            this.displayPhotoFromURL(photoData.url);
+        });
+    },
+
+    displayPhotoFromURL(url) {
+        const photoItem = document.createElement('div');
+        photoItem.className = 'photo-item';
+        photoItem.innerHTML = `<img src="${url}" alt="Family reunion photo">`;
+        this.photoGrid.appendChild(photoItem);
     }
 };
 
@@ -152,6 +234,9 @@ const RSVP = {
     rsvpForm: null,
     guestsSelect: null,
     familyMembersContainer: null,
+    nonAttendingList: null,
+    addNonAttendingBtn: null,
+    nonAttendingCount: 0,
     loadedRSVPs: new Set(), // Track loaded RSVPs to avoid duplicates
 
     init() {
@@ -159,6 +244,8 @@ const RSVP = {
         this.rsvpForm = document.getElementById('rsvpForm');
         this.guestsSelect = document.getElementById('guests');
         this.familyMembersContainer = document.getElementById('familyMembersContainer');
+        this.nonAttendingList = document.getElementById('nonAttendingList');
+        this.addNonAttendingBtn = document.getElementById('addNonAttendingBtn');
 
         if (!this.rsvpForm) {
             console.error('RSVP form not found');
@@ -167,6 +254,10 @@ const RSVP = {
 
         this.rsvpForm.addEventListener('submit', this.handleSubmit.bind(this));
         this.guestsSelect.addEventListener('change', this.handleGuestsChange.bind(this));
+
+        if (this.addNonAttendingBtn) {
+            this.addNonAttendingBtn.addEventListener('click', this.addNonAttendingField.bind(this));
+        }
 
         // Make existing RSVP items draggable
         this.makeDraggable(document.querySelectorAll('.rsvp-item'));
@@ -190,6 +281,8 @@ const RSVP = {
             name: rsvpData.name,
             guests: rsvpData.guests,
             familyMembers: rsvpData.familyMembers,
+            shirtSizes: rsvpData.shirtSizes || [],
+            nonAttending: rsvpData.nonAttending || [],
             timestamp: firebase.database.ServerValue.TIMESTAMP
         })
         .then(() => {
@@ -214,7 +307,8 @@ const RSVP = {
                 snapshot.forEach((childSnapshot) => {
                     const rsvpData = childSnapshot.val();
                     if (!this.loadedRSVPs.has(rsvpData.id)) {
-                        this.addRSVPItem(rsvpData.name, rsvpData.guests, rsvpData.familyMembers, rsvpData.id, false);
+                        // Load RSVP with non-attending members (but don't pass shirt sizes)
+                        this.addRSVPItem(rsvpData.name, rsvpData.guests, rsvpData.familyMembers, [], rsvpData.nonAttending || [], rsvpData.id, false);
                     }
                 });
             })
@@ -234,9 +328,9 @@ const RSVP = {
         rsvpsRef.on('child_added', (snapshot) => {
             const rsvpData = snapshot.val();
 
-            // Only add if we haven't loaded it yet
+            // Only add if we haven't loaded it yet (include non-attending but not shirt sizes)
             if (!this.loadedRSVPs.has(rsvpData.id)) {
-                this.addRSVPItem(rsvpData.name, rsvpData.guests, rsvpData.familyMembers, rsvpData.id, false);
+                this.addRSVPItem(rsvpData.name, rsvpData.guests, rsvpData.familyMembers, [], rsvpData.nonAttending || [], rsvpData.id, false);
             }
         });
     },
@@ -245,27 +339,97 @@ const RSVP = {
         const numGuests = parseInt(e.target.value);
         this.familyMembersContainer.innerHTML = '';
 
-        if (numGuests > 1) {
+        if (numGuests >= 1) {
             const div = document.createElement('div');
             div.className = 'family-members-section';
+
+            // Add shirt size for head of household first
             div.innerHTML = `
                 <h4 style="color: var(--forest); margin: 1.5rem 0 1rem; font-family: 'Karla', sans-serif;">
-                    Add Your Family Members (${numGuests - 1} additional ${numGuests === 2 ? 'person' : 'people'})
+                    T-Shirt Sizes ($10 each)
                 </h4>
+                <div class="form-group">
+                    <label for="shirtSize1">Your Shirt Size</label>
+                    <select id="shirtSize1" name="shirtSize1" required>
+                        <option value="">Select size</option>
+                        <option value="Youth Small">Youth Small</option>
+                        <option value="Youth Medium">Youth Medium</option>
+                        <option value="Youth Large">Youth Large</option>
+                        <option value="Adult Small">Adult Small</option>
+                        <option value="Adult Medium">Adult Medium</option>
+                        <option value="Adult Large">Adult Large</option>
+                        <option value="Adult XL">Adult XL</option>
+                        <option value="Adult 2XL">Adult 2XL</option>
+                        <option value="Adult 3XL">Adult 3XL</option>
+                    </select>
+                </div>
             `;
 
-            for (let i = 2; i <= numGuests; i++) {
-                const memberDiv = document.createElement('div');
-                memberDiv.className = 'form-group';
-                memberDiv.innerHTML = `
-                    <label for="member${i}">Family Member ${i} Name</label>
-                    <input type="text" id="member${i}" name="member${i}"
-                           placeholder="e.g., Spouse, Child's name" class="family-member-input">
-                `;
-                div.appendChild(memberDiv);
+            // Add additional family members if more than 1 person
+            if (numGuests > 1) {
+                const additionalHeader = document.createElement('h4');
+                additionalHeader.style.cssText = 'color: var(--forest); margin: 1.5rem 0 1rem; font-family: Karla, sans-serif;';
+                additionalHeader.textContent = `Additional Family Members (${numGuests - 1} ${numGuests === 2 ? 'person' : 'people'})`;
+                div.appendChild(additionalHeader);
+
+                for (let i = 2; i <= numGuests; i++) {
+                    const memberDiv = document.createElement('div');
+                    memberDiv.style.cssText = 'display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;';
+                    memberDiv.innerHTML = `
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="member${i}">Family Member ${i} Name</label>
+                            <input type="text" id="member${i}" name="member${i}"
+                                   placeholder="e.g., Spouse, Child's name" class="family-member-input">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="shirtSize${i}">Shirt Size</label>
+                            <select id="shirtSize${i}" name="shirtSize${i}" required>
+                                <option value="">Select size</option>
+                                <option value="Youth Small">Youth Small</option>
+                                <option value="Youth Medium">Youth Medium</option>
+                                <option value="Youth Large">Youth Large</option>
+                                <option value="Adult Small">Adult Small</option>
+                                <option value="Adult Medium">Adult Medium</option>
+                                <option value="Adult Large">Adult Large</option>
+                                <option value="Adult XL">Adult XL</option>
+                                <option value="Adult 2XL">Adult 2XL</option>
+                                <option value="Adult 3XL">Adult 3XL</option>
+                            </select>
+                        </div>
+                    `;
+                    div.appendChild(memberDiv);
+                }
             }
 
             this.familyMembersContainer.appendChild(div);
+        }
+    },
+
+    addNonAttendingField() {
+        this.nonAttendingCount++;
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'non-attending-item';
+        itemDiv.dataset.index = this.nonAttendingCount;
+        itemDiv.innerHTML = `
+            <input type="text"
+                   id="nonAttending${this.nonAttendingCount}"
+                   placeholder="Enter name of family member not attending"
+                   class="non-attending-input">
+            <button type="button" class="remove-non-attending-btn" data-index="${this.nonAttendingCount}">
+                Remove
+            </button>
+        `;
+
+        const removeBtn = itemDiv.querySelector('.remove-non-attending-btn');
+        removeBtn.addEventListener('click', () => this.removeNonAttendingField(this.nonAttendingCount));
+
+        this.nonAttendingList.appendChild(itemDiv);
+    },
+
+    removeNonAttendingField(index) {
+        const item = this.nonAttendingList.querySelector(`[data-index="${index}"]`);
+        if (item) {
+            item.remove();
         }
     },
 
@@ -280,9 +444,22 @@ const RSVP = {
             return;
         }
 
+        const numGuests = parseInt(guests);
+
+        // Collect shirt sizes
+        const shirtSizes = [];
+        for (let i = 1; i <= numGuests; i++) {
+            const shirtInput = document.getElementById(`shirtSize${i}`);
+            if (shirtInput && shirtInput.value) {
+                shirtSizes.push(shirtInput.value);
+            } else {
+                alert('Please select shirt sizes for all family members');
+                return;
+            }
+        }
+
         // Collect family member names
         const familyMembers = [name]; // Start with head of household
-        const numGuests = parseInt(guests);
 
         for (let i = 2; i <= numGuests; i++) {
             const memberInput = document.getElementById(`member${i}`);
@@ -291,17 +468,28 @@ const RSVP = {
             }
         }
 
+        // Collect non-attending family members
+        const nonAttending = [];
+        const nonAttendingInputs = document.querySelectorAll('.non-attending-input');
+        nonAttendingInputs.forEach(input => {
+            if (input.value.trim()) {
+                nonAttending.push(input.value.trim());
+            }
+        });
+
         // Create unique ID and save to Firebase
         const rsvpId = `rsvp-${Date.now()}`;
-        this.addRSVPItem(name, guests, familyMembers, rsvpId, true);
+        this.addRSVPItem(name, guests, familyMembers, shirtSizes, nonAttending, rsvpId, true);
 
         this.rsvpForm.reset();
         this.familyMembersContainer.innerHTML = '';
+        this.nonAttendingList.innerHTML = '';
+        this.nonAttendingCount = 0;
 
         alert('Thank you for your RSVP! Now drag your name to the family tree below to show your connection to Philomae.');
     },
 
-    addRSVPItem(name, guests, familyMembers = [name], id = null, saveToFirebase = false) {
+    addRSVPItem(name, guests, familyMembers = [name], shirtSizes = [], nonAttending = [], id = null, saveToFirebase = false) {
         const rsvpItem = document.createElement('div');
         rsvpItem.className = 'rsvp-item';
         rsvpItem.draggable = true;
@@ -310,8 +498,9 @@ const RSVP = {
         // Mark as loaded BEFORE saving to Firebase to prevent duplicate from listener
         this.loadedRSVPs.add(rsvpItem.id);
 
-        // Store family members data
+        // Store both attending and non-attending family members data
         rsvpItem.dataset.familyMembers = JSON.stringify(familyMembers);
+        rsvpItem.dataset.nonAttending = JSON.stringify(nonAttending);
 
         rsvpItem.innerHTML = `
             <span class="rsvp-name">${this.escapeHtml(name)}</span>
@@ -327,7 +516,9 @@ const RSVP = {
                 id: rsvpItem.id,
                 name: name,
                 guests: guests,
-                familyMembers: familyMembers
+                familyMembers: familyMembers,
+                shirtSizes: shirtSizes,
+                nonAttending: nonAttending
             });
         }
     },
@@ -651,6 +842,166 @@ const PWAInstall = {
 };
 
 // ===========================
+// Modal Module
+// ===========================
+const Modal = {
+    modals: {},
+    contentSections: {},
+
+    init() {
+        // Collect all modal content sections (the ones to hide)
+        const sections = document.querySelectorAll('.modal-content-section');
+        sections.forEach(section => {
+            const target = section.dataset.modalTarget;
+            if (target) {
+                this.contentSections[target] = section;
+            }
+        });
+
+        // Collect all modals
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(modal => {
+            this.modals[modal.id] = modal;
+        });
+
+        // Move content sections into their respective modals
+        this.moveContentToModals();
+
+        // Attach event listeners
+        this.attachEventListeners();
+    },
+
+    moveContentToModals() {
+        Object.keys(this.contentSections).forEach(targetId => {
+            const section = this.contentSections[targetId];
+            const modalBody = document.getElementById(targetId);
+
+            if (modalBody && section) {
+                // Clone the section content
+                const clonedSection = section.cloneNode(true);
+                clonedSection.style.display = 'block';
+                modalBody.appendChild(clonedSection);
+            }
+        });
+    },
+
+    attachEventListeners() {
+        // Access card buttons
+        const accessCards = document.querySelectorAll('.access-card');
+        accessCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const modalId = card.dataset.modal;
+                this.openModal(modalId);
+            });
+        });
+
+        // Close buttons
+        const closeButtons = document.querySelectorAll('.modal-close');
+        closeButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                const modal = e.target.closest('.modal');
+                if (modal) {
+                    this.closeModal(modal.id);
+                }
+            });
+        });
+
+        // Close when clicking outside modal content
+        Object.values(this.modals).forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeModal(modal.id);
+                }
+            });
+        });
+
+        // Close on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // Close all open modals
+                Object.keys(this.modals).forEach(modalId => {
+                    const modal = this.modals[modalId];
+                    if (modal.classList.contains('show')) {
+                        this.closeModal(modalId);
+                    }
+                });
+            }
+        });
+
+        // Re-initialize photo upload and payment in modals after content is moved
+        this.reinitializeModalFeatures();
+    },
+
+    openModal(modalId) {
+        const modal = this.modals[modalId];
+        if (modal) {
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+    },
+
+    closeModal(modalId) {
+        const modal = this.modals[modalId];
+        if (modal) {
+            modal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+    },
+
+    reinitializeModalFeatures() {
+        // Photos modal
+        const photosModalContent = document.getElementById('photosModalContent');
+        if (photosModalContent) {
+            const uploadArea = photosModalContent.querySelector('#uploadArea');
+            const photoInput = photosModalContent.querySelector('#photoInput');
+            const photoGrid = photosModalContent.querySelector('#photoGrid');
+
+            if (uploadArea && photoInput && photoGrid) {
+                uploadArea.addEventListener('click', () => photoInput.click());
+
+                photoInput.addEventListener('change', (e) => {
+                    Array.from(e.target.files).forEach(file => {
+                        if (file.type.startsWith('image/')) {
+                            // Display locally
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const photoItem = document.createElement('div');
+                                photoItem.className = 'photo-item';
+                                photoItem.innerHTML = `<img src="${e.target.result}" alt="Family photo">`;
+                                photoGrid.appendChild(photoItem);
+                            };
+                            reader.readAsDataURL(file);
+
+                            // Upload to Firebase
+                            PhotoUpload.uploadToFirebase(file);
+                        }
+                    });
+                });
+
+                // Load existing photos from Firebase
+                this.loadModalPhotos(photoGrid);
+            }
+        }
+    },
+
+    loadModalPhotos(photoGrid) {
+        if (!window.firebaseDB) {
+            return;
+        }
+
+        const photosRef = window.firebaseDB.ref('photos');
+
+        photosRef.on('child_added', (snapshot) => {
+            const photoData = snapshot.val();
+            const photoItem = document.createElement('div');
+            photoItem.className = 'photo-item';
+            photoItem.innerHTML = `<img src="${photoData.url}" alt="Family reunion photo">`;
+            photoGrid.appendChild(photoItem);
+        });
+    }
+};
+
+// ===========================
 // Smooth Scroll Module
 // ===========================
 const SmoothScroll = {
@@ -689,6 +1040,7 @@ document.addEventListener('DOMContentLoaded', () => {
     RSVP.init();
     FamilyTree.init();
     PWAInstall.init();
+    Modal.init();
     SmoothScroll.init();
 
     console.log('Family Reunion App initialized');
@@ -706,6 +1058,7 @@ if (typeof module !== 'undefined' && module.exports) {
         FamilyTree,
         Storage,
         PWAInstall,
+        Modal,
         SmoothScroll
     };
 }
