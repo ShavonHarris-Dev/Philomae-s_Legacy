@@ -10,6 +10,9 @@ yarn.lock
 .env.test.local
 .env.production.local
 
+# Firebase config with sensitive keys
+firebase-config.js
+
 # IDE
 .vscode/
 .idea/
