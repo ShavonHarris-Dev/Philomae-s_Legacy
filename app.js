@@ -51,11 +51,13 @@ const PhotoUpload = {
     photoInput: null,
     photoGrid: null,
     uploadArea: null,
+    photoGallery: null,
 
     init() {
         this.photoInput = document.getElementById('photoInput');
         this.photoGrid = document.getElementById('photoGrid');
         this.uploadArea = document.getElementById('uploadArea');
+        this.photoGallery = document.getElementById('photoGallery');
 
         if (!this.photoInput || !this.photoGrid || !this.uploadArea) {
             console.error('Photo upload elements not found');
@@ -200,10 +202,19 @@ const PhotoUpload = {
     },
 
     displayPhotoFromURL(url) {
+        // Add to photo grid (for upload preview)
         const photoItem = document.createElement('div');
         photoItem.className = 'photo-item';
         photoItem.innerHTML = `<img src="${url}" alt="Family reunion photo">`;
         this.photoGrid.appendChild(photoItem);
+        
+        // Add to main photo gallery (for display)
+        if (this.photoGallery) {
+            const galleryItem = document.createElement('div');
+            galleryItem.className = 'gallery-item';
+            galleryItem.innerHTML = `<img src="${url}" alt="Family reunion memory" loading="lazy">`;
+            this.photoGallery.appendChild(galleryItem);
+        }
     }
 };
 
@@ -649,8 +660,8 @@ const FamilyTree = {
             placeholder.remove();
         }
 
-        // Create and add the member wrapper
-        this.createMemberWrapper(dropZone, placementData.familyMembers, placementData.rsvpId);
+        // Create and add the member wrapper (with non-attending members)
+        this.createMemberWrapper(dropZone, placementData.familyMembers, placementData.rsvpId, placementData.nonAttending || []);
 
         // Mark the RSVP as placed if it exists
         const rsvpElement = document.getElementById(placementData.rsvpId);
@@ -660,7 +671,7 @@ const FamilyTree = {
         }
     },
 
-    createMemberWrapper(dropZone, familyMembers, rsvpId) {
+    createMemberWrapper(dropZone, familyMembers, rsvpId, nonAttending = []) {
         const memberWrapper = document.createElement('div');
         memberWrapper.className = 'member-wrapper';
         memberWrapper.dataset.rsvpId = rsvpId;
@@ -687,6 +698,29 @@ const FamilyTree = {
             }
 
             memberWrapper.appendChild(familyList);
+        }
+        
+        // Add non-attending family members with different styling
+        if (nonAttending && nonAttending.length > 0) {
+            const nonAttendingList = document.createElement('div');
+            nonAttendingList.className = 'non-attending-members-list';
+            
+            // Add a label for non-attending members
+            const label = document.createElement('div');
+            label.className = 'non-attending-label';
+            label.textContent = 'Cannot attend:';
+            nonAttendingList.appendChild(label);
+
+            nonAttending.forEach(memberName => {
+                if (memberName) {
+                    const memberItem = document.createElement('div');
+                    memberItem.className = 'family-member-item non-attending';
+                    memberItem.textContent = memberName;
+                    nonAttendingList.appendChild(memberItem);
+                }
+            });
+
+            memberWrapper.appendChild(nonAttendingList);
         }
 
         // Create a drop zone for descendants (children of this person)
@@ -736,11 +770,15 @@ const FamilyTree = {
             // Get family members data
             const familyMembersData = draggedElement.dataset.familyMembers;
             const familyMembers = familyMembersData ? JSON.parse(familyMembersData) : [draggedElement.querySelector('.rsvp-name').textContent];
+            
+            // Get non-attending members data
+            const nonAttendingData = draggedElement.dataset.nonAttending;
+            const nonAttending = nonAttendingData ? JSON.parse(nonAttendingData) : [];
 
             const rsvpId = draggedElement.id;
 
             // Create the member wrapper
-            this.createMemberWrapper(dropZone, familyMembers, rsvpId);
+            this.createMemberWrapper(dropZone, familyMembers, rsvpId, nonAttending);
 
             // Mark original as placed
             draggedElement.classList.add('placed');
@@ -755,7 +793,8 @@ const FamilyTree = {
                 id: placementId,
                 rsvpId: rsvpId,
                 parentZoneId: dropZone.id,
-                familyMembers: familyMembers
+                familyMembers: familyMembers,
+                nonAttending: nonAttending
             });
         }
     }

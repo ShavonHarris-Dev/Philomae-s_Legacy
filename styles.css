@@ -624,6 +624,86 @@ nav {
     object-fit: cover;
 }
 
+/* Photo Gallery Section */
+.photo-gallery-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--sage);
+}
+
+.photo-gallery-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--deep-brown);
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.photo-gallery-section p {
+    text-align: center;
+    color: var(--sage);
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.photo-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.gallery-item {
+    position: relative;
+    aspect-ratio: 4/3;
+    background: var(--cream);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+    border: 3px solid white;
+}
+
+.gallery-item:hover {
+    transform: translateY(-5px) rotate(1deg);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+.gallery-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(168, 181, 160, 0.1), rgba(212, 175, 55, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.gallery-item:hover::after {
+    opacity: 1;
+}
+
+/* Empty state for photo gallery */
+.photo-gallery-empty {
+    text-align: center;
+    padding: 3rem;
+    color: var(--sage);
+    font-style: italic;
+}
+
 /* ===========================
    Recommendations Section
    =========================== */
@@ -1124,6 +1204,43 @@ nav {
 
 .family-member-item:last-child {
     margin-bottom: 0;
+}
+
+/* Non-attending family members styling */
+.non-attending-members-list {
+    background: rgba(168, 181, 160, 0.05);
+    border-radius: 10px;
+    padding: 0.8rem;
+    margin-bottom: 0.5rem;
+    border: 1px dashed var(--sage);
+}
+
+.non-attending-label {
+    font-size: 0.75rem;
+    color: var(--sage);
+    font-style: italic;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.family-member-item.non-attending {
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--sage);
+    opacity: 0.7;
+    border: 1px dashed var(--sage);
+    position: relative;
+}
+
+.family-member-item.non-attending::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--sage);
+    opacity: 0.8;
 }
 
 .descendant-zone {
