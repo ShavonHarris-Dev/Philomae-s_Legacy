@@ -10,8 +10,9 @@ yarn.lock
 .env.test.local
 .env.production.local
 
-# Firebase config with sensitive keys
+# Firebase config with sensitive keys (keep local dev config private)
 firebase-config.js
+# firebase-config.prod.js is safe to commit (production config)
 
 # IDE
 .vscode/
