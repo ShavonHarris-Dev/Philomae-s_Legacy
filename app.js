@@ -52,6 +52,7 @@ const PhotoUpload = {
     photoGrid: null,
     uploadArea: null,
     photoGallery: null,
+    loadedPhotos: new Set(), // Track loaded photos to prevent duplicates
 
     init() {
         this.photoInput = document.getElementById('photoInput');
@@ -197,7 +198,11 @@ const PhotoUpload = {
 
         photosRef.on('child_added', (snapshot) => {
             const photoData = snapshot.val();
-            this.displayPhotoFromURL(photoData.url);
+            // Only add if we haven't loaded this photo yet
+            if (!this.loadedPhotos.has(photoData.url)) {
+                this.displayPhotoFromURL(photoData.url);
+                this.loadedPhotos.add(photoData.url);
+            }
         });
     },
 
@@ -208,7 +213,7 @@ const PhotoUpload = {
         photoItem.innerHTML = `<img src="${url}" alt="Family reunion photo">`;
         this.photoGrid.appendChild(photoItem);
         
-        // Add to main photo gallery (for display)
+        // Add to main photo gallery (for display) - only if gallery exists
         if (this.photoGallery) {
             const galleryItem = document.createElement('div');
             galleryItem.className = 'gallery-item';
@@ -673,8 +678,20 @@ const FamilyTree = {
 
     createMemberWrapper(dropZone, familyMembers, rsvpId, nonAttending = []) {
         const memberWrapper = document.createElement('div');
-        memberWrapper.className = 'member-wrapper';
+        memberWrapper.className = 'member-wrapper tree-member-draggable';
         memberWrapper.dataset.rsvpId = rsvpId;
+        memberWrapper.id = `member-wrapper-${rsvpId}`;
+
+        // Add delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'tree-member-delete';
+        deleteBtn.innerHTML = '×';
+        deleteBtn.title = 'Remove from family tree';
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent drag events
+            this.deleteMemberFromTree(memberWrapper, rsvpId);
+        });
+        memberWrapper.appendChild(deleteBtn);
 
         // Add the primary member name (head of household)
         const memberName = document.createElement('div');
@@ -739,7 +756,37 @@ const FamilyTree = {
         // Append the member wrapper to the drop zone
         dropZone.appendChild(memberWrapper);
 
+        // Make the member wrapper draggable for rearranging
+        this.makeMemberWrapperDraggable(memberWrapper);
+
         return memberWrapper;
+    },
+
+    makeMemberWrapperDraggable(memberWrapper) {
+        memberWrapper.draggable = true;
+        memberWrapper.classList.add('tree-member-draggable');
+        
+        memberWrapper.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text', memberWrapper.id || `tree-member-${Date.now()}`);
+            e.dataTransfer.effectAllowed = 'move';
+            memberWrapper.classList.add('dragging');
+            
+            // Store the original parent for reference
+            e.dataTransfer.setData('originalParent', memberWrapper.parentElement.id);
+        });
+        
+        memberWrapper.addEventListener('dragend', () => {
+            memberWrapper.classList.remove('dragging');
+        });
+        
+        // Add visual cues
+        memberWrapper.style.cursor = 'grab';
+        memberWrapper.addEventListener('mousedown', () => {
+            memberWrapper.style.cursor = 'grabbing';
+        });
+        memberWrapper.addEventListener('mouseup', () => {
+            memberWrapper.style.cursor = 'grab';
+        });
     },
 
     handleDragOver(e) {
@@ -759,36 +806,94 @@ const FamilyTree = {
         const draggedElement = document.getElementById(data);
 
         if (draggedElement && draggedElement.classList.contains('rsvp-item')) {
-            const dropZone = e.currentTarget;
+            // Handle new RSVP being added to tree
+            this.handleNewRSVPDrop(e, draggedElement);
+        } else if (draggedElement && draggedElement.classList.contains('member-wrapper')) {
+            // Handle existing tree member being rearranged
+            this.handleTreeMemberMove(e, draggedElement);
+        }
+    },
 
-            // Remove placeholder text if it exists (only on first add)
-            const placeholder = dropZone.querySelector('span[style*="italic"]');
-            if (placeholder) {
-                placeholder.remove();
-            }
+    handleNewRSVPDrop(e, draggedElement) {
+        const dropZone = e.currentTarget;
 
-            // Get family members data
-            const familyMembersData = draggedElement.dataset.familyMembers;
-            const familyMembers = familyMembersData ? JSON.parse(familyMembersData) : [draggedElement.querySelector('.rsvp-name').textContent];
+        // Remove placeholder text if it exists (only on first add)
+        const placeholder = dropZone.querySelector('span[style*="italic"]');
+        if (placeholder) {
+            placeholder.remove();
+        }
+
+        // Get family members data
+        const familyMembersData = draggedElement.dataset.familyMembers;
+        const familyMembers = familyMembersData ? JSON.parse(familyMembersData) : [draggedElement.querySelector('.rsvp-name').textContent];
+        
+        // Get non-attending members data
+        const nonAttendingData = draggedElement.dataset.nonAttending;
+        const nonAttending = nonAttendingData ? JSON.parse(nonAttendingData) : [];
+
+        const rsvpId = draggedElement.id;
+
+        // Create the member wrapper
+        this.createMemberWrapper(dropZone, familyMembers, rsvpId, nonAttending);
+
+        // Mark original as placed
+        draggedElement.classList.add('placed');
+        draggedElement.draggable = false;
+
+        // Save to Firebase
+        const placementId = `placement-${Date.now()}`;
+        // Mark as loaded BEFORE saving to prevent duplicate from listener
+        this.loadedPlacements.add(placementId);
+
+        this.saveToFirebase({
+            id: placementId,
+            rsvpId: rsvpId,
+            parentZoneId: dropZone.id,
+            familyMembers: familyMembers,
+            nonAttending: nonAttending
+        });
+    },
+
+    handleTreeMemberMove(e, draggedElement) {
+        const dropZone = e.currentTarget;
+        const originalParentId = e.dataTransfer.getData('originalParent');
+        const originalParent = document.getElementById(originalParentId);
+
+        // Don't allow dropping on itself or its descendants
+        if (dropZone === draggedElement || dropZone.closest('.member-wrapper') === draggedElement) {
+            return;
+        }
+
+        // Remove from original location
+        const originalPlaceholder = originalParent.querySelector('span[style*="italic"]');
+        if (draggedElement.parentElement.children.length === 1 && !originalPlaceholder) {
+            // Add placeholder back if this was the only child
+            originalParent.innerHTML = '<span style="color: var(--sage); font-style: italic; font-size: 0.8rem;">Add children</span>';
+        }
+
+        // Remove placeholder from new location
+        const placeholder = dropZone.querySelector('span[style*="italic"]');
+        if (placeholder) {
+            placeholder.remove();
+        }
+
+        // Move the element
+        dropZone.appendChild(draggedElement);
+
+        // Update Firebase with new placement
+        const rsvpId = draggedElement.dataset.rsvpId;
+        if (rsvpId) {
+            // Remove old placement from Firebase
+            this.removeOldPlacement(rsvpId);
             
-            // Get non-attending members data
-            const nonAttendingData = draggedElement.dataset.nonAttending;
-            const nonAttending = nonAttendingData ? JSON.parse(nonAttendingData) : [];
-
-            const rsvpId = draggedElement.id;
-
-            // Create the member wrapper
-            this.createMemberWrapper(dropZone, familyMembers, rsvpId, nonAttending);
-
-            // Mark original as placed
-            draggedElement.classList.add('placed');
-            draggedElement.draggable = false;
-
-            // Save to Firebase
+            // Save new placement
             const placementId = `placement-${Date.now()}`;
-            // Mark as loaded BEFORE saving to prevent duplicate from listener
             this.loadedPlacements.add(placementId);
-
+            
+            // Get family data from the wrapper
+            const familyMembers = this.extractFamilyMembersFromWrapper(draggedElement);
+            const nonAttending = this.extractNonAttendingFromWrapper(draggedElement);
+            
             this.saveToFirebase({
                 id: placementId,
                 rsvpId: rsvpId,
@@ -797,6 +902,74 @@ const FamilyTree = {
                 nonAttending: nonAttending
             });
         }
+    },
+
+    extractFamilyMembersFromWrapper(wrapper) {
+        const members = [];
+        const primaryName = wrapper.querySelector('.tree-member-name');
+        if (primaryName) members.push(primaryName.textContent);
+        
+        const familyItems = wrapper.querySelectorAll('.family-member-item:not(.non-attending)');
+        familyItems.forEach(item => members.push(item.textContent));
+        
+        return members;
+    },
+
+    extractNonAttendingFromWrapper(wrapper) {
+        const nonAttending = [];
+        const nonAttendingItems = wrapper.querySelectorAll('.family-member-item.non-attending');
+        nonAttendingItems.forEach(item => nonAttending.push(item.textContent));
+        return nonAttending;
+    },
+
+    removeOldPlacement(rsvpId) {
+        if (!window.firebaseDB) return;
+        
+        const treeRef = window.firebaseDB.ref('treePlacements');
+        treeRef.orderByChild('rsvpId').equalTo(rsvpId).once('value', (snapshot) => {
+            snapshot.forEach((childSnapshot) => {
+                childSnapshot.ref.remove();
+            });
+        });
+    },
+
+    deleteMemberFromTree(memberWrapper, rsvpId) {
+        // Confirm deletion
+        const memberName = memberWrapper.querySelector('.tree-member-name')?.textContent || 'this member';
+        if (!confirm(`Remove ${memberName} from the family tree? They can be re-added by dragging from the RSVP list.`)) {
+            return;
+        }
+
+        // Get the parent drop zone
+        const parentZone = memberWrapper.parentElement;
+        
+        // Remove from DOM
+        memberWrapper.remove();
+        
+        // Add placeholder back if the zone is now empty
+        if (parentZone.children.length === 0) {
+            const placeholder = document.createElement('span');
+            placeholder.style.cssText = 'color: var(--sage); font-style: italic; font-size: 0.8rem;';
+            placeholder.textContent = parentZone.classList.contains('descendant-zone') ? 'Add children' : 'Drag family members here';
+            parentZone.appendChild(placeholder);
+        }
+        
+        // Remove from Firebase
+        this.removeOldPlacement(rsvpId);
+        
+        // Make the original RSVP draggable again if it exists
+        const originalRSVP = document.getElementById(rsvpId);
+        if (originalRSVP) {
+            originalRSVP.classList.remove('placed');
+            originalRSVP.draggable = true;
+        }
+        
+        // Remove from loaded placements tracking
+        this.loadedPlacements.forEach(placementId => {
+            if (placementId.includes(rsvpId)) {
+                this.loadedPlacements.delete(placementId);
+            }
+        });
     }
 };
 
@@ -1032,10 +1205,14 @@ const Modal = {
 
         photosRef.on('child_added', (snapshot) => {
             const photoData = snapshot.val();
-            const photoItem = document.createElement('div');
-            photoItem.className = 'photo-item';
-            photoItem.innerHTML = `<img src="${photoData.url}" alt="Family reunion photo">`;
-            photoGrid.appendChild(photoItem);
+            // Check if this photo is already displayed in modal
+            const existingPhoto = photoGrid.querySelector(`img[src="${photoData.url}"]`);
+            if (!existingPhoto) {
+                const photoItem = document.createElement('div');
+                photoItem.className = 'photo-item';
+                photoItem.innerHTML = `<img src="${photoData.url}" alt="Family reunion photo">`;
+                photoGrid.appendChild(photoItem);
+            }
         });
     }
 };

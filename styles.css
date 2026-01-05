@@ -1171,6 +1171,74 @@ nav {
     flex: 1 1 auto;
     min-width: 200px;
     max-width: 300px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+/* Delete button for tree members */
+.tree-member-delete {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--terracotta);
+    color: white;
+    border: 2px solid white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: all 0.2s ease;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.tree-member-delete:hover {
+    background: var(--deep-brown);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.tree-member-delete:active {
+    transform: scale(0.95);
+}
+
+/* Hide delete button initially, show on member hover */
+.member-wrapper .tree-member-delete {
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.member-wrapper:hover .tree-member-delete {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* Draggable tree member styling */
+.tree-member-draggable {
+    cursor: grab;
+    user-select: none;
+}
+
+.tree-member-draggable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    border-color: var(--terracotta);
+}
+
+.tree-member-draggable.dragging {
+    opacity: 0.5;
+    cursor: grabbing;
+    transform: rotate(5deg);
+}
+
+.tree-member-draggable:active {
+    cursor: grabbing;
 }
 
 .tree-member-name {
